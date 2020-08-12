@@ -1,0 +1,12 @@
+FROM node:alpine
+LABEL maintainer="Jonathan Nielsen"
+WORKDIR /app
+
+ADD package*.json /app/
+RUN npm install
+RUN npm install -g nodemon
+ENV DEBUG=app:*
+ENV NODE_PATH=src
+
+EXPOSE 3000
+CMD nodemon

@@ -1,0 +1,72 @@
+version: '3.7'
+services:
+  app:
+    build:
+      context: ./app
+      dockerfile: Dockerfile.dev
+    image: app
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+    container_name: app  
+    tty: true
+    ports:
+      - '3000:3000'
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - NODE_ENV=development
+    volumes:
+      - ./app/src:/app/src
+      - ${PWD}/app/.eslintignore:/app/.eslintignore
+      - ${PWD}/app/.eslintrc.js:/app/.eslintrc.js
+      - ${PWD}/app/.env:/app/.env
+      - ${PWD}/app/tsconfig.json:/app/tsconfig.json
+      - ${PWD}/app/tslint.json:/app/tslint.json
+      - ${PWD}/app/nodemon.json:/app/nodemon.json
+      - ${PWD}/app/package.json:/app/package.json
+      - app_node_modules:/app/node_modules
+    depends_on:
+      - mongo
+      - redis
+
+  mongo:
+    restart: always
+    image: mongo:latest 
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+    container_name: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: 'random-username'
+      MONGO_INITDB_ROOT_PASSWORD: 'random-password'
+    tty: true
+    volumes:
+      - mongodb_data:/data/mongo/db
+    ports:
+      - '27017:27017'
+
+  redis:
+    restart: always
+    image: redis:latest
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+    container_name: redis
+    command: redis-server --requirepass random-password
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: random-password
+    tty: true
+    volumes:
+      - redis_data:/data/redis/db
+    ports:
+      - '6379:6379'
+
+volumes:
+  mongodb_data:
+  redis_data:
+  app_node_modules:
