@@ -17,7 +17,7 @@ Open new terminal and trace logs of the app container by running
 ```
 
 ## Install node modules
-Insall packages locally as well to prevent errors in your editor
+Install packages locally as well to prevent errors in your editor
 ```shell
 cd app
 npm install
